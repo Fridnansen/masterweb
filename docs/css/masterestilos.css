@@ -1,0 +1,195 @@
+/* 
+font-family: 'Roboto', sans-serif;
+ */
+ 
+ body{
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;    
+    line-height: 22px;
+    background-color: rgb(227, 226, 231);
+    text-align: justify;
+ }
+      
+ header{
+     background-color: rgb(42, 73, 94);
+     padding: 16px 0;/*eje Y - eje X*/
+ }
+
+ header h1{
+     color: white;
+     font-size: 36 px;
+     font-style: italic;
+     font-weight: 100;/*100 al 900*/
+     display: inline-block;/*similar al display: inline flex*/
+     position: relative; 
+     bottom: 35px;
+ }
+
+ nav{
+     background-color: rgb(72, 107, 103);
+ }
+
+ nav ul{
+     list-style: none;
+     padding: 0;
+     margin: 0;
+ }
+
+ nav ul li{
+     display: inline-block;
+     width: 24.6%;
+ }
+
+ nav ul li a{
+     color: white;
+     text-decoration: none;
+     text-align: center;
+     display:block;
+     padding: 5px 0;
+ }
+
+
+ nav ul li a:hover{
+     background-color: #4c76a5;
+ }
+ nav ul li a.activo{
+     background-color: #4c76a5;
+ }
+
+ footer{
+     background-color: rgb(69, 39, 99);
+     padding:10px 0;
+     text-align: center;
+     clear: both;
+     color: white;
+ }
+
+ .holder{
+     max-width: 960px;
+     margin:0 auto;
+ /* background-color: red; */
+ }
+
+ .homeimg img{
+     max-width: 100%;
+
+ }
+ h2{
+     color: #2e64a1;
+     font-weight: 400;
+ }
+
+ .bienvenidos{
+     width: 73%;
+     float:left
+ }
+
+ .testimonios{
+     width: 25%;
+     float: right;
+ }
+
+ .bienvenido p{
+     font-size: 18px;
+     line-height: 28px;
+ }
+ .testimonio{
+     background-color: rgb(190, 4, 17);
+     padding: 10px;
+     color: white;
+     text-align: justify;
+ }
+ 
+ .contactos{
+     overflow: hidden;
+ }
+
+ .contacto p{
+     font-size: 15px;
+     color: #2e64a1
+
+ }
+ 
+ .conta{
+     width: 20%;
+     float: left;
+     border: 1px solid red;
+     border-radius: 10px;
+     margin-left: 2.25%;
+     box-sizing: border-box;
+     text-align: center;
+ }
+
+ .conta li{
+    font-size: 13px;
+    text-align: left;
+ }
+
+ .contactos{
+     overflow: hidden;
+ }
+
+ .contacto p{
+     font-size: 15px;
+     color: #2e64a1
+
+ }
+ 
+ .conta{
+     width: 20%;
+     float: left;
+     border: 1px solid red;
+     border-radius: 10px;
+     margin-left: 2.25%;
+     box-sizing: border-box;
+     text-align: center;
+ }
+
+ .conta li{
+    font-size: 13px;
+    text-align: left;
+ }
+
+
+ .registra{
+    overflow: hidden;
+}
+
+.regis p{
+    font-size: 15px;
+
+
+}
+
+.regis{
+    width: 30%;
+    float: left;
+    border: 1px solid red;
+    border-radius: 10px;
+    margin-left: 2.25%;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.regis li{
+   font-size: 15px;
+   text-align: left;
+}
+
+.formulario ul li label{
+    width: 22%;
+    display: inline-block;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.regis ul textarea{
+    text-align: left;
+    height: 120px;
+    resize: both;
+    border-radius: 5px;
+    border: 1px solid #999;
+    font-size: 13px;
+    padding: 5px;
+    width: 300px;
+}

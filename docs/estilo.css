@@ -1,0 +1,719 @@
+@import url('https://fonts.googleapis.com/css2?family=Audiowide&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Wallpoet&display=swap');
+
+body {
+	font-family: 'Audiowide', cursive;
+	align-items: left;
+	align-self: left;
+	margin: auto;
+}
+
+nav{
+	
+	background-color: rgb(42, 73, 94);
+	height: 80px;
+	padding-top: 20px;/*separa los vinculos de la parte superior*/ 
+	text-align: left;/*centra los vinculos en la división*/
+    
+}
+nav a{
+	text-decoration: none; /*quita el subrayado de los vinculos*/
+	color: rgb(227, 226, 231);
+	background-color: rgb(72, 107, 103); /*coloca un color de fondo a los vinculos*/
+	padding: 0px; /*hace que el fondo sea 5px más grande*/
+	margin: 0 10px; /*separalos vinvulos entre si*/
+	border-radius: 7px;/*aplica un redondeo a cada una de las esquinas*/
+	text-size-adjust: 1px; 
+	font-family: 'Times New Roman', Times, serif;
+}
+nav a:hover{/*este formato se aplica cuando el mouse está sobre el vinculo*/
+	background-color: #4c76a5;
+	box-shadow: 5px 5px gray; /*agrega una sombra*/
+
+} 
+nav a:visited{/*se aplica cuando ya visitamos el vinculo*/
+    color: rgb(227, 226, 231);
+}
+
+nav a.activo{
+	background-color: #4c76a5;
+}
+
+.rojo{
+	color: rgb(190, 4, 17);
+	text-align: right;
+}
+.rojo1{
+	color: rgb(190, 4, 17);
+	text-align: center;
+}
+.rojo2{
+	color: rgb(190, 4, 17);
+	font-family: fantasy;
+	font-size: 1em;
+	text-align: left;
+}
+.azul{
+	color: #4c76a5;
+	text-align: center;
+}
+.blanco{
+	color: rgb(227, 226, 231);
+	font-size: 1em;
+	text-align: right;
+}
+.blanco2{
+	color: rgb(227, 226, 231);
+}
+
+.item{
+	padding-left: 100px;
+	width: 350px;
+    height: 250px;
+	float: left;
+}
+.video{
+	padding-left: 50px;
+	width: 500px;
+    height: 350px;
+	float: left;
+}
+
+.item2{
+    width: 100%;
+    text-align: center;
+	float:left;
+	background-color: rgb(69, 39, 99);
+}
+
+.item3{
+	width: 450px;
+	float: left;
+}
+
+.item4{
+	text-align: center;
+}
+
+.item5{
+	width: 200px;
+	height: 20px;
+	float: left;
+	background-color: #4c76a5;
+}
+
+.foto2{
+	width: 450px;
+	float: left;
+	background-color: rgb(190, 4, 17);
+}
+
+@font-face{
+	font-family: "SUSH";
+	src: url("SUSH!.ttf");
+}
+
+@font-face{
+	font-family: "Spring";
+	src: url("Spring Flower.ttf");
+}
+
+h1{
+    font-family: "SUSH";
+	font-size: 2.5em; 
+    color: red; /*coloca un color de fondo a los vinculos*/
+	padding: 5px; /*hace que el fondo sea 5px más grande*/
+	margin: 0 10px; /*separalos vinvulos entre si*/
+}
+
+h2{
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	font-size: 15px;
+}
+
+h3{
+	color:black;
+	font-style: initial;
+	font-family: normal;
+	text-align: left;
+}
+
+h4{
+	color: rgb(227, 226, 231);
+	font-style: initial;
+	font-family: normal;
+	text-align: center;
+
+}
+
+
+article{
+	margin-top: 20px;
+	height: 320px;
+	width: 400px;
+	margin-bottom: 30px;
+}
+
+aside {
+	margin-top: 17px;
+	height: 300px;
+	margin-bottom: 17px;
+}
+
+section {
+	height: 300px;
+}
+
+#contactos{
+	background-color: black;
+	color: rgb(227, 226, 231);
+	text-align: left;
+    width: 35%;
+	height: 300px;
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-left: 20px;
+	padding-bottom: 5px;
+	float: left;
+}
+
+#conta{
+	background-color: black;
+	text-align: left;
+	float: left;
+	padding-top: 5px;
+	padding-right: 10px;
+	padding-left: 20px;
+	padding-bottom: 5px;
+    width: 15%;
+	height: 300px;
+}
+
+#logos{
+    background-color: black;
+	padding-top: 5px;
+    float: left;
+	padding-right: 0px;
+	padding-left: 20px;
+	padding-bottom: 10px;
+    width: 25%;
+	height: 300px;
+}
+
+#producto1{
+	background-color: rgb(190, 4, 17);
+	color:white;
+	width: 533px;
+	height: 250px;
+	padding-top: 5px;
+	padding-right: 100px;
+	padding-left: 30px;
+	padding-bottom: 20px;
+	float: left;
+}
+#tablero{
+	background-color: rgb(190, 4, 17);
+	float: left;
+	padding-top: 70px;
+	padding-right: 35px;
+	padding-left: 34px;
+	padding-bottom: 5px;
+	width: 400px;
+	height: 200px;
+}
+#producto2{
+	background-color: rgb(190, 4, 17);
+	color:white;
+	width: 561px;
+	height: 240px;
+	padding-top: 5px;
+	padding-right: 100px;
+	padding-left: 34px;
+	padding-bottom: 5px;
+	float: left;
+}
+#videojuego{
+	background-color: rgb(190, 4, 17);
+	float: left;
+	padding-top: 40px;
+	padding-right: 36px;
+	padding-left: 34px;
+	padding-bottom: 10px;
+	width: 400px;
+	height: 200px;
+}
+
+#servicios1{
+	background-color: rgb(190, 4, 17);
+	color:white;
+	text-align: left;
+	width: 533px;
+	height: 340px;
+	padding-top: 5px;
+	padding-right: 100px;
+	padding-left: 30px;
+	padding-bottom: 5px;
+	float: left;
+}
+#torneo{
+	background-color: seagreen;
+	border: #2e64a1;
+	padding-top: 100px;
+	padding-right: 100px;
+	padding-left: 170px;
+	padding-bottom: 5px;
+	width: 400px;
+	height: 245px;
+	float: left;
+}
+#servicios2{
+	background-color: seagreen;
+	color:white;
+	text-align: left;
+	width: 533px;
+	height: 250px;
+	padding-top: 5px;
+	padding-right: 100px;
+	padding-left: 30px;
+	padding-bottom: 5px;
+	float: left;
+}
+#entrenamiento{
+	background-color: seagreen;
+	text-align: left;
+	padding-top: 5px;
+	padding-right: 100px;
+	padding-left: 170px;
+	padding-bottom: 5px;
+	width: 400px;
+	height: 250px;
+	float: left;
+}
+
+
+#index-ppal {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: -7rem 8rem 8rem;
+	row-gap: 0px;
+	grid-template-areas:
+	  "headeri headeri headeri"
+	  "menui maini extrai"
+	  "banneri banneri headeri";
+  }
+
+
+  #headeri {
+	background-color: rgb(42, 73, 94);;
+	padding-bottom: 2%;
+	grid-area: headeri;
+  }
+  
+  #menui {
+	grid-area: menui;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px; 
+  }
+
+  #extrai {
+	grid-area: extrai;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px; 
+  }
+
+  #maini {
+	grid-area: maini;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 10px; 
+  }
+  
+  #banneri {
+	grid-area: banneri;
+  }
+  
+  
+  @media screen and (max-width: 760px) {
+	#index-ppal {
+	  grid-template-columns: 1fr;
+	  grid-template-rows: 1fr;
+	  grid-template-areas:
+		"headeri"
+		"menui"
+		"maini"
+		"extrai"
+		"banneri";
+	}}
+  
+	@media screen and (min-width: 761px) and (max-width: 1023px) {
+	#index-ppal{
+	  grid-template-columns: repeat(2, 1fr);
+	  grid-template-rows: -7rem 1fr 8rem;
+	  grid-template-areas: 
+	  "headeri headeri"
+	  "menui maini"
+	  "extrai"
+	  "banneri banneri"
+	  ;
+	}
+}
+  
+
+#contenedor-ppal {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	grid-template-rows: 7rem 1fr 1fr 8rem;
+	row-gap: 5px;
+	grid-template-areas:
+	  "header header"
+	  "menu image"
+	  "main extra"
+	  "banner banner";
+  }
+  
+
+  #header {
+	background-color: rgb(42, 73, 94);;
+	padding-bottom: 2%;
+	grid-area: header;
+  }
+  
+  #menu {
+	background-color:  darkcyan;
+	grid-area: menu;
+	color: white;
+	padding-left: 40px;
+	padding-right: 20px; 
+  }
+
+  #main {
+	background-color: darkcyan;
+	grid-area: main;
+	color: white;
+	padding-left: 40px;
+	padding-right: 20px; 
+  }
+  
+  #image {
+	padding-top: 40px; 
+	background-color:  darkcyan;
+	grid-area: image;
+  }
+  
+  #extra {
+	padding-top: 40px;
+	background-color: darkcyan;
+	grid-area: extra;
+  }
+  
+  #banner {
+	background-color: rgb(42, 73, 94);
+	grid-area: banner;
+  }
+  
+  
+  @media screen and (max-width: 760px) {
+	#contenedor-ppal {
+	  grid-template-columns: 1fr;
+	  grid-template-rows: 1fr;
+	  grid-template-areas:
+		"header"
+		"menu"
+		"image"
+		"main"
+		"extra"
+		"banner";
+	}}
+  
+	@media screen and (min-width: 761px) and (max-width: 1023px) {
+	#contenedor-ppal{
+	  grid-template-columns: repeat(2, 1fr);
+	  grid-template-rows: 7rem 1fr 1fr 8rem;
+	  grid-template-areas: 
+	  "header header"
+	  "menu image"
+	  "main extra"
+	  "banner banner"
+	  ;
+	}
+}
+
+
+#contacto-ppal {
+	display: grid;
+	grid-template-columns: 500px repeat(3, 1fr);
+	grid-template-rows: 7rem 1fr 8rem;
+	row-gap: 5px;
+	grid-template-areas:
+	  "headerc headerc headerc headerc"
+	  "menuc imagec mainc extrac"
+	  "bannerc bannerc bannerc bannerc";
+  }
+ 
+  #headerc {
+	background-color: rgb(42, 73, 94);
+	grid-area: headerc;
+  }
+  
+  #menuc {
+	background-color:  black;
+	grid-area: menuc;
+	color: white;
+	padding-top: 50px;
+	padding-bottom: 50px;
+	padding-left: 40px;
+	padding-right: 20px; 
+  }
+
+  #imagec {
+	padding-top: 50px;
+	padding-bottom: 50px;  
+	padding-left: 10px;
+	padding-right: 10px; 
+	background-color:  black;
+	color: white;
+	grid-area: imagec;
+	text-align: center;
+  }
+
+  #mainc {
+	padding-top: 50px;
+	padding-bottom: 50px;
+	padding-left: 10px;
+	padding-right: 10px; 
+	background-color: black;
+	grid-area: mainc;
+	color: white;
+	text-align: center;
+	
+  }
+  
+   
+  #extrac {
+	padding-top: 50px;
+	padding-bottom: 50px;
+	padding-left: 10px;
+	padding-right: 10px; 
+	background-color: black;
+	color: white;
+	grid-area: extrac;
+	text-align: center;
+  }
+  
+  #bannerc {
+	background-color: rgb(42, 73, 94);
+	grid-area: bannerc;
+  }
+  
+  
+  @media screen and (max-width: 760px) {
+	#contacto-ppal {
+	  grid-template-columns: 1fr;
+	  grid-template-rows: 1fr;
+	  grid-template-areas:
+		"headerc"
+		"menuc"
+		"imagec"
+		"mainc"
+		"extrac"
+		"bannerc";
+	}}
+  
+	@media screen and (min-width: 761px) and (max-width: 1023px) {
+	#contacto-ppal{
+	  grid-template-columns: repeat(2, 1fr);
+	  grid-template-rows: 7rem 1fr 1fr 8rem;
+	  grid-template-areas: 
+	  "headerc headerc"
+	  "menuc imagec"
+	  "mainc extrac"
+	  "bannerc bannerc"
+	  ;
+	}
+}
+
+/* 🔥 TRANSITION 🔥  */
+/* ⛸  PATINADORA ⛸ */
+
+#container {
+	overflow: hidden;
+	/*border-bottom: 30px black solid;*/
+  }
+  
+  #patin {
+	margin-top: 0px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	height: 50px;
+	width: 10px;
+	align-items: center;
+  }
+
+  #container:hover #patin {
+	margin-top: 5%;
+	transition: all 2s;
+	transition-timing-function: ease-in;
+  }
+
+  /* 🎥 ANIMACIONES */
+  
+  #animacion {
+	width: 200px;
+	height: 200px;
+	background-image: url(img/logos.jpg);
+	background-size: contain;
+	margin: auto;
+	animation: redondeo 3.5s 2s infinite alternate;
+  }
+  
+  @keyframes redondeo {
+	25% {
+	  border-radius: 0 0 0 0;
+	  transform: rotate(90deg);
+	}
+	25% {
+	  border-radius: 50% 50% 50% 50%;
+	  transform: rotate(-45deg);
+	}
+	50% {
+	  border-radius: 50% 50% 50% 50%;
+	  transform: rotate(90deg);
+	}
+	75% {
+	  border-radius: 50% 50% 50% 50%;
+	  transform: rotate(-45deg);
+	}
+	100% {
+	  border-radius: 0 0 0 0;
+	  transform: rotate(-90deg);
+	}
+  }
+
+  #regis-ppal {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: -7rem 8rem 8rem;
+	row-gap: 0px;
+	grid-template-areas:
+	  "headero headero headero"
+	  "menuo maino extrao"
+	  "bannero bannero headero";
+  }
+
+
+  #headertro {
+	background-color: rgb(42, 73, 94);;
+	padding-bottom: 2%;
+	grid-area: headeri;
+  }
+  
+  #menuo {
+	grid-area: menuo;
+
+  }
+
+  #extrao {
+	grid-area: extrao;
+
+  }
+
+  #maino {
+	grid-area: maino;
+
+  }
+  
+  #bannero {
+	grid-area: bannero;
+  }
+  
+  
+  @media screen and (max-width: 760px) {
+	#regis-ppal {
+	  grid-template-columns: 1fr;
+	  grid-template-rows: 1fr;
+	  grid-template-areas:
+		"headero"
+		"menuo"
+		"maino"
+		"extrao"
+		"bannero";
+	}}
+  
+	@media screen and (min-width: 761px) and (max-width: 1023px) {
+	#regis-ppal{
+	  grid-template-columns: repeat(2, 1fr);
+	  grid-template-rows: -7rem 1fr 8rem;
+	  grid-template-areas: 
+	  "headero headero"
+	  "menuo maino"
+	  "extrao"
+	  "bannero bannero"
+	  ;
+	}
+}
+
+.regis p{
+    font-size: 15px;
+}
+
+.regis{
+    float: left;
+    border: 20px solid 	rgb(190, 4, 17);
+    border-radius: 10px;
+    margin-left: 2.25%;
+	padding: 20px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.regis li{
+   font-size: 15px;
+   text-align: left;
+}
+
+.formulario ul li label{
+    width: 27%;
+    display: inline-block;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.regis ul textarea{
+    text-align: left;
+    height: 120px;
+    resize: both;
+    border-radius: 5px;
+    border: 1px solid #999;
+    font-size: 15px;
+    padding: 5px;
+    width: 300px;
+} 
+
+.testimonio{
+	background-color: rgb(190, 4, 17);
+	padding-right: 25px;
+	padding-left: 25px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	margin-left: 30px;
+	color: white;
+	text-align: justify;
+}
+
+h5{
+	font-family: 'Wallpoet', cursive;
+	color: #2e64a1;
+	text-align: center;
+	font-size: 1em;
+	padding-bottom: 0px;
+}
+h3{
+	font-family: 'Wallpoet', cursive;
+	color: rgb(21, 231, 56)
+
+}

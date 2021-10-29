@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="img/md.ico" type="image/x-icon">
+    <link rel="stylesheet" type="text/css" href="estilo.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/9ba46bf25f.js" crossorigin="anonymous"></script>
+    <title>Masterdrez</title>
+</head>
+
+<body>
+    <div id="regis-ppal"></div>
+        <header id="headero" style="background-color: rgb(42, 73, 94); padding-bottom: 2%;">
+            <nav>
+            <a href="index.html"> Inicio </a>
+            <a href="productos.html"> Productos </a>
+            <a href="servicios.html"> Servicios </a>
+            <a  href="registros.html"> Compras </a>
+            <a class="activo" href="registro.html"> Usuario </a>
+            <a href="contacto.html"> Contactos </a>
+            <h1 style="text-align: center; " class="animate__animated animate__fadeInDown">Masterdrez</h1>
+            <br>
+            <br>
+            <br>
+            <br>
+            </nav>
+        </header>
+
+        <article style="margin-left: 40px;" id="menuo" class="regis">
+            <h5>Registro de Usuarios</h5>
+            <form action="show_data.html" target = "_black" class="formulario">
+            <ul>
+                <li><label for="firstname"> Nombre: </label> <input type="text" name="firstname" placeholder="Ingrese su nombre..."> <br><br></li>
+                <li><label for="lastname"> Apellido: </label> <input type="text" name="lastname" placeholder="Ingrese su apellido..."> <br><br></li>
+                <li><label for="street"> Dirección: </label> <input type="text" name="address" placeholder="Ingrese su dirección..."> <br><br></li>
+                <li><label for="city"> Ciudad: </label> <input type="text" name="city" value="C.A.B.A."> </li>
+            </ul>
+        </article>
+        
+        <article style="margin-left: 40px;" id="maino" class="regis" class="formulario">
+            <ul>
+                <li><label style="width: 40%; font-weight: bold; display: inline-block; vertical-align: top;"  for="zipcode"> Codigo Postal: </label> <input type="text" name="zipcode" placeholder="Ingrese su codigo postal..."> <br><br></li>
+                <li><label style="width: 40%; font-weight: bold; display: inline-block; vertical-align: top;" for="BirthDate"> Fecha de Nacimiento: </label> <input type="date" name="birthdate" > <br> </li>
+                <li>
+                    <p> <b>Sexo: </b>
+                     <input style="width: 10px;" type="radio" name="gender" value="nombre" checked> Hombre
+                     <input style="width: 10px;" type="radio" name="gender" value="Mujer" checked> Mujer
+                    </p>
+                </li>
+                <li> <p>  <b>Estudios: </b><br>
+                <input type="checkbox" name="estudio" value="primarios" checked> Primarios
+                <input type="checkbox" name="estudio" value="secundarios" checked> Secundarios
+                <input type="checkbox" name="estudio" value="terciarios" checked> Terciarios <br>
+                <input type="checkbox" name="estudio" value="universitarios" checked>Universitarios
+                <input type="checkbox" name="estudio" value="otro" checked> Otro
+                </p>
+                </li>
+            </ul>
+        </article>
+        <article style="margin-left: 40px;" id="extrao" class="regis" class="formulario">
+            <ul>
+                <li><label for=""> <b>Comentario: </b></label></li>
+                <br> <textarea name="" placeholder="Ingrese su comentario..."></textarea>
+            </ul>  
+          <input type="submit" value="Enviar">
+        </article>
+        
+
+        <footer id="bannero" class="item2" style="background-color: rgb(69, 39, 99);">
+        <br>
+        <a href="https://www.facebook.com/Masterdrez" target="_black"><i style="background-color: rgb(7, 8, 8);   color: rgb(69, 39, 99);" class="fab fa-facebook fa-2x"></i></a>
+            <!--img style="width: 30px; height: 30px;" alt="" src="img/facebook.ico"-->
+        <a href="https://www.instagram.com/masterdrez/" target="_black" ><i style="background-color: rgb(7, 8, 8); color: rgb(69, 39, 99);" class="fab fa-instagram fa-2x"></i></a>
+            <!-- img style="width: 30px; height: 30px;" alt="" src="img/instagram.ico"-->
+        <a href="https://twitter.com/masterdrez" target="_black"><i style="background-color: rgb(7, 8, 8); color: rgb(69, 39, 99);" class="fab fa-twitter fa-2x"></i></a>
+         <!--img style="width: 30px; height: 30px;" alt="" src="img/Twitters.ico"></i--> 
+        <p style="text-align: center; padding-top: 10px; color: rgb(250, 250, 250);" > Derechos reservados @2021</p>
+        <br>
+        <br>
+        </footer>
+    </div>
+</body>
+
+</html>
