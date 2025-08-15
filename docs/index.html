@@ -75,13 +75,23 @@
                 allow="autoplay"; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                 referrerpolicy="strict-origin-when-cross-origin" 
                 allowfullscreen>    
-          </iframe>--> 
+          </iframe>
           <div id="patin" style="display: flex; justify-content: center; align-items: center; padding: 20px;">
                 <iframe 
                     src="http://localhost:5173/" 
                     style="width: 100%; max-width: 800px; aspect-ratio: 1 / 1; border: none; box-shadow: 0 0 15px rgba(0,0,0,0.3); border-radius: 10px;">
-                </iframe>
-            </div>
+          </div>
+          </iframe>--> 
+          <div id="patin" style="display: flex; justify-content: center; align-items: center;">
+              <div id="unity-container" style="width: 800px; height: 800px;">
+                <canvas id="unity-canvas" width=800 height=800></canvas>
+         </div>
+         <script src="Build/Masterdrez-2D.loader.js"></script>
+            <script>
+                UnityLoader.instantiate("unity-container", "Build/Masterdrez-2D.data");
+            </script>
+         </div>
+            
             <br>
         </menu>
         <section id="extrai"  class="item"></div>
@@ -113,4 +123,5 @@
 </body>
 
 </html>
+
 
