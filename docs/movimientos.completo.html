@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Masterdrez — Definitivo (peón + enroque + jaque/mate/ahogado)</title>
+  <style>
+    :root {
+      --bg: #333;
+      --dark: #b58863;
+      --light: #f0d9b5;
+      --white: #f8f1f1;
+      --black: #111;
+      --blue: #1739e7;
+      --red: #e11d48;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: var(--bg);
+      margin: 0
+    }
+
+    #topbar {
+      color: #fff;
+      font-family: system-ui, Segoe UI, Roboto, Arial;
+      display: flex;
+      gap: 14px;
+      align-items: center
+    }
+
+    #turn {
+      padding: .25rem .6rem;
+      border-radius: 999px;
+      background: #222;
+      border: 1px solid #444;
+      font-size: 14px
+    }
+
+    .dot {
+      display: inline-block;
+      width: .75rem;
+      height: .75rem;
+      border-radius: 50%;
+      vertical-align: -2px;
+      margin-right: .35rem
+    }
+
+    .dot.white {
+      background: var(--white);
+      border: 1px solid #999
+    }
+
+    .dot.black {
+      background: var(--black)
+    }
+
+    .dot.blue {
+      background: var(--blue)
+    }
+
+    .dot.red {
+      background: var(--red)
+    }
+
+    #msg {
+      color: #ddd;
+      min-height: 1.2em
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(16, 40px);
+      grid-template-rows: repeat(16, 40px);
+      gap: 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35)
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      user-select: none
+    }
+
+    .dark {
+      background: var(--dark)
+    }
+
+    .light {
+      background: var(--light)
+    }
+
+    .cell.invalid {
+      background: #222
+    }
+
+    .piece {
+      cursor: grab
+    }
+
+    .piece[draggable="false"] {
+      cursor: not-allowed;
+      opacity: .6
+    }
+
+    .highlight {
+      outline: 3px solid #facc15
+    }
+
+    .in-check {
+      box-shadow: inset 0 0 0 3px #f00
+    }
+
+    /* promoción */
+    #promotionOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .45);
+      z-index: 999
+    }
+
+    #promotionMenu {
+      display: none;
+      position: absolute;
+      background: #eee;
+      padding: 10px;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, .4);
+      z-index: 1000;
+      transform: translate(-50%, -110%)
+    }
+
+    #promotionMenu .title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      text-align: center
+    }
+
+    #promotionMenu button {
+      font-size: 28px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      background: #fff;
+      cursor: pointer
+    }
+  </style>
+</head>
+
+<body>
+  <div id="promotionOverlay"></div>
+  <div id="promotionMenu" role="dialog" aria-hidden="true">
+    <div class="title">Elige promoción</div>
+    <div id="promotionChoices" style="display:flex; gap:8px; justify-content:center;"></div>
+  </div>
+
+  <div id="topbar">
+    <div id="turn"><span class="dot" id="turnDot"></span><strong id="turnText"></strong></div>
+    <div id="msg"></div>
+  </div>
+  <div id="board"></div>
+
+  <script>
+    const board = document.getElementById("board");
+    const msg = document.getElementById("msg");
+    const turnText = document.getElementById("turnText");
+    const turnDot = document.getElementById("turnDot");
+
+    const size = 16;
+    const colors = ["white", "blue", "black", "red"]; // orden de turnos
+    let turnIndex = 0;
+
+    const colorStyles = { white: "var(--white)", black: "var(--black)", blue: "var(--blue)", red: "var(--red)" };
+    const colorText = { white: "Blanco", blue: "Azul", black: "Negro", red: "Rojo" };
+
+    /* Dirección "hacia adelante" y diagonales de captura hacia adelante */
+    const pawnDir = {
+      white: { f: [-1, 0], diags: [[-1, -1], [-1, 1]] },   // adelante = arriba
+      black: { f: [1, 0], diags: [[1, -1], [1, 1]] },      // adelante = abajo
+      blue:  { f: [0, -1], diags: [[-1, -1], [1, -1]] },   // adelante = izquierda
+      red:   { f: [0, 1], diags: [[-1, 1], [1, 1]] }       // adelante = derecha
+    };
+
+    /* zonas inválidas (esquinas) => tablero en cruz */
+    const invalidZone = (r, c) => {
+      const cut = 4;
+      return (r < cut && c < cut) || (r < cut && c >= size - cut) || (r >= size - cut && c < cut) || (r >= size - cut && c >= size - cut);
+    };
+
+    /* crear tablero */
+    for (let r = 0; r < size; r++) {
+      for (let c = 0; c < size; c++) {
+        const cell = document.createElement("div");
+        cell.dataset.r = r; cell.dataset.c = c;
+        if (invalidZone(r, c)) cell.className = "cell invalid";
+        else {
+          cell.className = "cell " + ((r + c) % 2 ? "dark" : "light");
+          cell.addEventListener("dragover", e => e.preventDefault());
+          cell.addEventListener("drop", onDrop);
+        }
+        board.appendChild(cell);
+      }
+    }
+
+    /* utils básicas */
+    function getCell(r, c) { return [...board.children].find(x => x.dataset.r == r && x.dataset.c == c && !x.classList.contains("invalid")); }
+    function inside(r, c) { return !!getCell(r, c); }
+    function pieceAt(r, c) { const cell = getCell(r, c); return cell ? cell.firstChild : null; }
+    function getType(sym) { switch (sym) { case "♟": return "pawn"; case "♜": return "rook"; case "♝": return "bishop"; case "♞": return "knight"; case "♛": return "queen"; case "♚": return "king"; } }
+
+    /* id simple para piezas (necesario para en-passant persistente) */
+    let nextPid = 1;
+
+    /* colocar piezas base */
+    function addPiece(symbol, color, r, c) {
+      const cell = getCell(r, c); if (!cell) return;
+      const piece = document.createElement("div");
+      piece.textContent = symbol;
+      piece.className = "piece";
+      piece.style.color = colorStyles[color] || color;
+      piece.dataset.color = color;
+      piece.dataset.type = getType(symbol);
+      piece.dataset.pid = String(nextPid++);           // <- id
+      piece.draggable = (color === currentColor());
+      piece.addEventListener("dragstart", onDragStart);
+      cell.appendChild(piece);
+    }
+    function placePieces() {
+      const W = "♛♚♜♝♞♟", B = "♚♛♜♝♞♟", U = "♛♚♜♝♞♟", R = "♚♛♜♝♞♟";
+      
+      // Peones (bandas)
+      for (let c = 3; c < size - 3; c++) { addPiece(W[5], "white", size - 2, c); }
+      for (let c = 3; c < size - 3; c++) { addPiece(B[5], "black", 1, c); }
+      for (let r = 3; r < size - 3; r++) { addPiece(U[5], "blue", r, size - 2); }
+      for (let r = 3; r < size - 3; r++) { addPiece(R[5], "red", r, 1); }
+      
+      // Mayores
+      const backRowW = [W[2], W[4], W[3], W[1], W[0], W[3], W[4], W[2]];
+      const backRowB = [B[2], B[4], B[3], B[1], B[0], B[3], B[4], B[2]];
+      const backRowU = [U[2], U[4], U[3], U[1], U[0], U[3], U[4], U[2]];
+      const backRowR = [R[2], R[4], R[3], R[1], R[0], R[3], R[4], R[2]];
+      for (let i = 0; i < 8; i++) {
+        addPiece(backRowW[i], "white", size - 1, (i + 4));
+        addPiece(backRowB[i], "black", 0, (i + 4));
+        addPiece(backRowU[i], "blue", (i + 4), size - 1);
+        addPiece(backRowR[i], "red", (i + 4), 0);
+      }
+    }
+    placePieces();
+
+    function currentColor() { return colors[turnIndex % colors.length]; }
+    function setTurnUI() {
+      const col = currentColor();
+      turnText.textContent = `Turno: ${colorText[col]}`;
+      turnDot.className = "dot " + col;
+      for (const p of document.querySelectorAll(".piece")) p.draggable = (p.dataset.color === col);
+    }
+    setTurnUI();
+
+    let draggedPiece = null, fromCell = null;
+    function onDragStart(e) {
+      if (this.dataset.color !== currentColor()) { e.preventDefault(); return; }
+      draggedPiece = this; fromCell = this.parentElement;
+    }
+    function onDrop(e) {
+      e.preventDefault();
+      if (!draggedPiece) return;
+      const to = this;
+      const moved = tryMove(draggedPiece, fromCell, to);
+      draggedPiece = null; fromCell = null;
+      if (moved) advanceTurn();
+    }
+    
+    /* movimientos de línea/diagonal (piezas mayores) */
+    function pathClear(fr, fc, tr, tc, stepR, stepC) {
+      let r = fr + stepR, c = fc + stepC;
+      while (r !== tr || c !== tc) {
+        const cell = getCell(r, c);
+        if (!cell || cell.firstChild) return false;
+        r += stepR; c += stepC;
+      }
+      return true;
+    }
+
+    // Torre
+    function validateRookMove(fr, fc, tr, tc) {
+      if (fr !== tr && fc !== tc) return false;
+      const stepR = tr > fr ? 1 : (tr < fr ? -1 : 0), stepC = tc > fc ? 1 : (tc < fc ? -1 : 0);
+      return pathClear(fr, fc, tr, tc, stepR, stepC);
+    }
+
+    // Alfil
+    function validateBishopMove(fr, fc, tr, tc) {
+      if (Math.abs(tr - fr) !== Math.abs(tc - fc)) return false;
+      const stepR = tr > fr ? 1 : -1, stepC = tc > fc ? 1 : -1;
+      return pathClear(fr, fc, tr, tc, stepR, stepC);
+    }
+
+    // Caballo
+    function validateKnightMove(fr, fc, tr, tc) {
+      const dr = Math.abs(tr - fr), dc = Math.abs(tc - fc);
+      return ((dr === 2 && dc === 1) || (dr === 1 && dc === 2)) && inside(tr, tc);
+    }
+
+    // —— ENROQUE helpers ——
+    function isInitialKingPosition(color, r, c) {
+      // Posiciones reales según placePieces():
+      // Blancas: fila 15, col 7 | Negras: fila 0, col 8
+      // Azules: col 15, fila 7  | Rojas:  col 0, fila 8
+      if (color === "white") return (r === size - 1 && c === 7);
+      if (color === "black") return (r === 0 && c === 8);
+      if (color === "blue")  return (c === size - 1 && r === 7);
+      if (color === "red")   return (c === 0 && r === 8);
+      return false;
+    }
+    function findCastlingRook(color, fr, fc, stepR, stepC) {
+      let r = fr + stepR, c = fc + stepC;
+      while (inside(r, c)) {
+        const p = pieceAt(r, c);
+        if (p) {
+          if (p.dataset.color === color && p.dataset.type === "rook") {
+            return { r, c };
+          } else {
+            return null;
+          }
+        }
+        r += stepR; c += stepC;
+      }
+      return null;
+    }
+    function setMoved(color, type, r, c) { state.moved[`${color}:${type}:${r},${c}`] = true; }
+    function getMoved(color, type, r, c) { return !!state.moved[`${color}:${type}:${r},${c}`]; }
+
+    // Rey (incluye enroque)
+    function validateKingMove(piece, fr, fc, tr, tc) {
+      const dr = tr - fr, dc = tc - fc;
+      // Movimiento normal de 1
+      if (Math.max(Math.abs(dr), Math.abs(dc)) === 1) return { legal: true, special: null };
+      // Enroque (mover 2 en eje recto)
+      if ((dr === 0 && Math.abs(dc) === 2) || (dc === 0 && Math.abs(dr) === 2)) {
+        const col = piece.dataset.color;
+        const stepR = dr === 0 ? 0 : (tr > fr ? 1 : -1);
+        const stepC = dc === 0 ? 0 : (tc > fc ? 1 : -1);
+
+        // posiciones iniciales de rey
+        if (!isInitialKingPosition(col, fr, fc)) return { legal: false };
+        // ¿rey ya se movió?
+        if (getMoved(col, "king", fr, fc)) return { legal: false };
+
+        // buscar torre en el lado correspondiente (hacia el extremo)
+        const rookInfo = findCastlingRook(col, fr, fc, stepR, stepC);
+        if (!rookInfo) return { legal: false };
+
+        // ¿torre movida?
+        if (getMoved(col, "rook", rookInfo.r, rookInfo.c)) return { legal: false };
+
+        // casillas entre rey y torre libres
+        if (!pathClear(fr, fc, rookInfo.r, rookInfo.c, stepR, stepC)) return { legal: false };
+
+        // casillas de paso y destino del rey no bajo ataque
+        const pathSquares = [];
+        let r = fr, c = fc;
+        for (let i = 0; i < 2; i++) { r += stepR; c += stepC; pathSquares.push({ r, c }); }
+        if (r !== tr || c !== tc) return { legal: false };
+        for (const sq of [{ r: fr, c: fc }, ...pathSquares]) {
+          if (isSquareUnderAttack(sq.r, sq.c, col)) return { legal: false };
+        }
+        const special = { type: ((stepR + stepC > 0) ? "castle-short" : "castle-long"), rook: rookInfo, stepR, stepC };
+        return { legal: true, special };
+      }
+      return { legal: false };
+    }
+
+    /* --------- ESTADO --------- */
+    const state = {
+      moved: {},          // seguimiento de rey/torres para enroque
+      enPassants: []      // en-passant persistente (lista de oportunidades)
+    };
+
+    /* direcciones simples permitidas por color (frontal + laterales) */
+    function singleStepsFor(color) {
+      const f = pawnDir[color].f;
+      // laterales dependen del "brazo" (horizontales para white/black, verticales para blue/red)
+      const lateral = (color === "white" || color === "black") ? [[0, 1], [0, -1]] : [[1, 0], [-1, 0]];
+      return [f, ...lateral];
+    }
+
+    /* --------- VALIDACIÓN DE PEÓN --------- */
+    function validatePawnMove(piece, fr, fc, tr, tc) {
+      const col = piece.dataset.color;
+      const { diags } = pawnDir[col];
+      const singles = singleStepsFor(col);
+      const dr = tr - fr, dc = tc - fc;
+
+      // 1) movimiento simple
+      for (const [sr, sc] of singles) {
+        if (dr === sr && dc === sc && !pieceAt(tr, tc))
+          return { legal: true, special: null };
+      }
+
+      // 2) doble paso en cualquiera de las direcciones simples
+      for (let i = 0; i < singles.length; i++) {
+        const [sr, sc] = singles[i];
+        const midR = fr + sr, midC = fc + sc;
+        if (dr === 2 * sr && dc === 2 * sc &&
+          inside(midR, midC) && !pieceAt(midR, midC) && !pieceAt(tr, tc)) {
+          return { legal: true, special: { type: "double-step", mid: { r: midR, c: midC } } };
+        }
+      }
+
+      // 3) captura normal en diagonales hacia adelante
+      for (const [adr, adc] of diags) {
+        if (fr + adr === tr && fc + adc === tc) {
+          const target = pieceAt(tr, tc);
+          if (target && target.dataset.color !== col) return { legal: true, special: null };
+        }
+      }
+
+      // 4) captura al paso sin caducidad
+      for (const rec of state.enPassants) {
+        if (rec.r === tr && rec.c === tc) {
+          const victim = pieceAt(rec.capture.r, rec.capture.c);
+          if (!victim || victim.dataset.pid !== rec.pid || victim.dataset.type !== "pawn") continue;
+          for (const [adr, adc] of diags) {
+            if (fr + adr === tr && fc + adc === tc) {
+              if (!pieceAt(tr, tc)) return { legal: true, special: { type: "enpassant", capture: { r: rec.capture.r, c: rec.capture.c }, recPid: rec.pid } };
+            }
+          }
+        }
+      }
+
+      return { legal: false };
+    }
+
+    /* --------- ATAQUES / JAQUE --------- */
+    function isSquareUnderAttack(r, c, defenderColor) {
+      for (const col of colors) {
+        if (col === defenderColor) continue;
+        const pieces = [...document.querySelectorAll(`.piece[data-color='${col}']`)];
+        for (const p of pieces) {
+          const pr = +p.parentElement.dataset.r, pc = +p.parentElement.dataset.c;
+          const t = p.dataset.type;
+          if (t === "pawn") {
+            const d = pawnDir[col];
+            for (const [adr, adc] of d.diags) if (pr + adr === r && pc + adc === c) return true;
+          } else if (t === "knight") {
+            const moves = [[2, 1], [2, -1], [-2, 1], [-2, -1], [1, 2], [1, -2], [-1, 2], [-1, -2]];
+            for (const [dr, dc] of moves) if (pr + dr === r && pc + dc === c && inside(r, c)) return true;
+          } else if (t === "king") {
+            if (Math.max(Math.abs(pr - r), Math.abs(pc - c)) === 1) return true;
+          } else {
+            const dirs = (t === "bishop") ? [[1, 1], [1, -1], [-1, 1], [-1, -1]]
+              : (t === "rook") ? [[1, 0], [-1, 0], [0, 1], [0, -1]]
+                : [[1, 1], [1, -1], [-1, 1], [-1, -1], [1, 0], [-1, 0], [0, 1], [0, -1]];
+            for (const [dr, dc] of dirs) {
+              let rr = pr + dr, cc = pc + dc;
+              while (inside(rr, cc)) {
+                const occ = pieceAt(rr, cc);
+                if (rr === r && cc === c) return true;
+                if (occ) break;
+                rr += dr; cc += dc;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+
+    function findKing(color) {
+      const k = document.querySelector(`.piece[data-color='${color}'][data-type='king']`);
+      if (!k) return null;
+      return { r: +k.parentElement.dataset.r, c: +k.parentElement.dataset.c, el: k };
+    }
+
+    function hasAnyLegalMove(color) {
+      const pieces = [...document.querySelectorAll(`.piece[data-color='${color}']`)];
+      for (const p of pieces) {
+        const fr = +p.parentElement.dataset.r, fc = +p.parentElement.dataset.c;
+        for (const cell of board.querySelectorAll(".cell:not(.invalid)")) {
+          const tr = +cell.dataset.r, tc = +cell.dataset.c;
+          if (fr === tr && fc === tc) continue;
+          if (cell.firstChild && cell.firstChild.dataset.color === color) continue;
+          const snap = snapshotBoard();
+          const resTry = tentativeTryMove(p, fr, fc, tr, tc);
+          restoreBoard(snap);
+          if (resTry) return true;
+        }
+      }
+      return false;
+    }
+    function tentativeTryMove(p, fr, fc, tr, tc) {
+      let legal = false, special = null;
+      switch (p.dataset.type) {
+        case "pawn": ({ legal, special } = validatePawnMove(p, fr, fc, tr, tc)); break;
+        case "rook": legal = validateRookMove(fr, fc, tr, tc); break;
+        case "bishop": legal = validateBishopMove(fr, fc, tr, tc); break;
+        case "queen": legal = validateRookMove(fr, fc, tr, tc) || validateBishopMove(fr, fc, tr, tc); break;
+        case "knight": legal = validateKnightMove(fr, fc, tr, tc); break;
+        case "king": ({ legal, special } = validateKingMove(p, fr, fc, tr, tc)); break;
+      }
+      if (!legal) return false;
+      applyMove({ piece: p, from: { r: fr, c: fc }, to: { r: tr, c: tc }, special }, true);
+      const kingSq = findKing(p.dataset.color);
+      const inCheck = kingSq ? isSquareUnderAttack(kingSq.r, kingSq.c, p.dataset.color) : false;
+      return !inCheck;
+    }
+
+    /* --------- APLICAR MOVIMIENTO (incluye enroque y en-passant persistente) --------- */
+    function applyMove({ piece, from, to, special }, simulate) {
+      const toCell = getCell(to.r, to.c);
+
+      // en-passant: remover víctima
+      if (special && special.type === "enpassant") {
+        const cap = pieceAt(special.capture.r, special.capture.c);
+        if (cap) cap.remove();
+      }
+
+      // mover pieza (captura normal si hay)
+      if (toCell.firstChild) toCell.firstChild.remove();
+      toCell.appendChild(piece);
+
+      // enroque: reubicar torre
+      if (special && (special.type === "castle-short" || special.type === "castle-long")) {
+        const rookCell = getCell(special.rook.r, special.rook.c);
+        const rook = rookCell ? rookCell.firstChild : null;
+        if (rook) {
+          const rr = to.r - special.stepR;
+          const rc = to.c - special.stepC;
+          const dest = getCell(rr, rc);
+          if (dest.firstChild) dest.firstChild.remove();
+          dest.appendChild(rook);
+          if (!simulate) setMoved(piece.dataset.color, "rook", special.rook.r, special.rook.c);
+        }
+      }
+
+      // registrar oportunidad de en-passant si hubo doble paso (sin caducidad)
+      if (!simulate && special && special.type === "double-step") {
+        const pid = piece.dataset.pid || (piece.dataset.pid = String(nextPid++));
+        state.enPassants.push({
+          r: special.mid.r, c: special.mid.c,          // casilla intermedia
+          capture: { r: to.r, c: to.c },               // dónde quedó el peón que avanzó doble
+          pid,                                         // id del peón objetivo
+        });
+      }
+
+      // marcar movidos para rey/torres
+      if (!simulate) {
+        if (piece.dataset.type === "king") setMoved(piece.dataset.color, "king", from.r, from.c);
+        else if (piece.dataset.type === "rook") setMoved(piece.dataset.color, "rook", from.r, from.c);
+      }
+
+      // depurar oportunidades que ya no son válidas (peón objetivo se movió o murió)
+      if (!simulate) {
+        state.enPassants = state.enPassants.filter(rec => {
+          const p = pieceAt(rec.capture.r, rec.capture.c);
+          return p && p.dataset.pid === rec.pid && p.dataset.type === "pawn";
+        });
+      }
+    }
+
+    /* --------- SNAPSHOTS (incluye oportunidades y moved) --------- */
+    function snapshotBoard() {
+      return {
+        html: board.innerHTML,
+        enPassants: JSON.parse(JSON.stringify(state.enPassants)),
+        moved: JSON.parse(JSON.stringify(state.moved))
+      };
+    }
+    function restoreBoard(snap) {
+      board.innerHTML = snap.html;
+      state.enPassants = snap.enPassants || [];
+      state.moved = snap.moved || {};
+      for (const cell of board.querySelectorAll(".cell:not(.invalid)")) {
+        cell.addEventListener("dragover", e => e.preventDefault());
+        cell.addEventListener("drop", onDrop);
+      }
+      for (const p of board.querySelectorAll(".piece")) {
+        if (!p.dataset.pid) p.dataset.pid = String(nextPid++);
+        p.addEventListener("dragstart", onDragStart);
+      }
+      setTurnUI();
+    }
+
+    /* --------- TRY MOVE + PROMOCIÓN + CHEQUEOS COMPLETOS --------- */
+    function tryMove(piece, from, to) {
+      const color = piece.dataset.color, type = piece.dataset.type;
+      const fr = +from.dataset.r, fc = +from.dataset.c;
+      const tr = +to.dataset.r, tc = +to.dataset.c;
+      if (to.classList.contains("invalid")) return false;
+      if (to.firstChild && to.firstChild.dataset.color === color) return false;
+
+      let special = null, legal = false;
+      switch (type) {
+        case "pawn": ({ legal, special } = validatePawnMove(piece, fr, fc, tr, tc)); break;
+        case "rook": legal = validateRookMove(fr, fc, tr, tc); break;
+        case "bishop": legal = validateBishopMove(fr, fc, tr, tc); break;
+        case "queen": legal = validateRookMove(fr, fc, tr, tc) || validateBishopMove(fr, fc, tr, tc); break;
+        case "knight": legal = validateKnightMove(fr, fc, tr, tc); break;
+        case "king": ({ legal, special } = validateKingMove(piece, fr, fc, tr, tc)); break;
+      }
+      if (!legal) return false;
+
+      // Simular para impedir auto-jaque
+      const snapshot = snapshotBoard();
+      applyMove({ piece, from: { r: fr, c: fc }, to: { r: tr, c: tc }, special }, true);
+      const kingSq = findKing(color);
+      const inCheck = kingSq ? isSquareUnderAttack(kingSq.r, kingSq.c, color) : false;
+      restoreBoard(snapshot);
+      if (inCheck) return false;
+
+      // volver a tomar la pieza real tras restaurar
+      const freshPiece = pieceAt(fr, fc);
+      if (!freshPiece) return false;
+
+      // Aplicar definitivo
+      applyMove({ piece: freshPiece, from: { r: fr, c: fc }, to: { r: tr, c: tc }, special }, false);
+
+      // Promoción
+      if (freshPiece.dataset.type === "pawn") maybePromote(freshPiece);
+
+      // Chequeos post-movimiento para el siguiente color
+      const nextCol = colors[(turnIndex + 1) % 4];
+      postMoveChecks(nextCol);
+      return true;
+    }
+
+    function postMoveChecks(color) {
+      clearCheckHighlights();
+      const k = findKing(color);
+      if (!k) { setMsg(`¡${colorText[color]} está eliminado!`); return; }
+      const inCheck = isSquareUnderAttack(k.r, k.c, color);
+      if (inCheck) {
+        highlightCell(k.r, k.c, true);
+        // ¿tiene movimientos legales?
+        if (!hasAnyLegalMove(color)) {
+          setMsg(`Jaque mate a ${colorText[color]} ✨`);
+        } else {
+          setMsg(`Jaque a ${colorText[color]}!`);
+        }
+      } else {
+        if (!hasAnyLegalMove(color)) {
+          setMsg(`Ahogado de ${colorText[color]} (tablas contra ese bando).`);
+        } else {
+          setMsg("");
+        }
+      }
+    }
+    function setMsg(t) { msg.textContent = t; }
+    function highlightCell(r, c, on) { const cell = getCell(r, c); if (!cell) return; cell.classList.toggle('in-check', !!on); }
+    function clearCheckHighlights() { for (const c of board.querySelectorAll('.in-check')) c.classList.remove('in-check'); }
+
+    function advanceTurn() { turnIndex = (turnIndex + 1) % 4; setTurnUI(); }
+    function refreshDraggables() { const col = currentColor(); for (const p of document.querySelectorAll('.piece')) p.draggable = (p.dataset.color === col); }
+
+    /* --------- PROMOCIÓN (menú gráfico) --------- */
+    function onEdgeOfOpponentArm(r, c) {
+      return (r === 0 || r === size - 1 || c === 0 || c === size - 1) && inside(r, c);
+    }
+    function maybePromote(piece) {
+      const r = +piece.parentElement.dataset.r, c = +piece.parentElement.dataset.c;
+      if (onEdgeOfOpponentArm(r, c)) showPromotionMenu(piece);
+    }
+    function showPromotionMenu(pawn) {
+      const overlay = document.getElementById('promotionOverlay');
+      const menu = document.getElementById('promotionMenu');
+      const choices = document.getElementById('promotionChoices');
+      choices.innerHTML = "";
+      const options = [{ sym: "♛", type: "queen" }, { sym: "♜", type: "rook" }, { sym: "♝", type: "bishop" }, { sym: "♞", type: "knight" }];
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.textContent = opt.sym; btn.type = 'button';
+        btn.addEventListener('click', () => {
+          const newPiece = document.createElement('div');
+          newPiece.className = 'piece';
+          newPiece.textContent = opt.sym;
+          newPiece.dataset.color = pawn.dataset.color;
+          newPiece.dataset.type = opt.type;
+          newPiece.dataset.pid = pawn.dataset.pid || String(nextPid++);
+          newPiece.style.color = pawn.style.color;
+          newPiece.draggable = (newPiece.dataset.color === currentColor());
+          newPiece.addEventListener('dragstart', onDragStart);
+          pawn.parentElement.replaceChild(newPiece, pawn);
+          if (document.activeElement) document.activeElement.blur();
+          menu.style.display = 'none'; overlay.style.display = 'none'; menu.setAttribute('aria-hidden', 'true');
+        });
+        choices.appendChild(btn);
+      });
+      const rect = pawn.parentElement.getBoundingClientRect();
+      menu.style.left = (rect.left + rect.width / 2 + window.scrollX) + 'px';
+      menu.style.top = (rect.top + window.scrollY) + 'px';
+      menu.style.transform = 'translate(-50%,-110%)';
+      menu.style.display = 'block';
+      menu.setAttribute('aria-hidden', 'false');
+      overlay.style.display = 'block';
+      overlay.onclick = () => {
+        if (document.activeElement) document.activeElement.blur();
+        menu.style.display = 'none'; overlay.style.display = 'none'; menu.setAttribute('aria-hidden', 'true');
+      };
+    }
+
+    setMsg("Arrastra una pieza del color en turno.");
+    refreshDraggables();
+  </script>
+</body>
+
+</html>
